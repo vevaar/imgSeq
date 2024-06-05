@@ -5,19 +5,19 @@
   var tl = gsap.timeline()  
   // video 3 ----------------------------
   
-  
-  function dom(){
+  function dom() {
     const canvas = document.querySelector("#home>canvas");
     const context = canvas.getContext("2d");
+    const redDiv = document.getElementById("redDiv");
   
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  
-  window.addEventListener("resize", function () {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    render();
-  })
+  
+    window.addEventListener("resize", function () {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      render();
+    });
   
   function files(index) {
     var data = `https://i.postimg.cc/MZjz0cKp/pexels-tima-miroshnichenko-7033923-000.jpg
@@ -383,36 +383,44 @@
   }
   
   const frameCount = 358;
-  
   const images = [];
   const imageSeq = {
     frame: 0
   };
-  
+
   for (let i = 0; i < frameCount; i++) {
     const img = new Image();
     img.src = files(i);
     images.push(img);
   }
-  
+
   gsap.to(imageSeq, {
     frame: frameCount - 1,
     snap: "frame",
     ease: "none",
     scrollTrigger: {
-        scrub:1.8,
-        pin:true,
-        trigger:"#home",
+      scrub: 1.8,
+      pin: true,
+      trigger: "#home",
     },
-    onUpdate: render
+    onUpdate: function() {
+      render();
+      if (imageSeq.frame >= 100 && imageSeq.frame <= 205) {
+        redDiv.classList.add('show');
+        redDiv.classList.remove('hide');
+      } else {
+        redDiv.classList.add('hide');
+        redDiv.classList.remove('show');
+      }
+    }
   });
-  
+
   images[0].onload = render;
-  
+
   function render() {
-    scaleImage(images[imageSeq.frame], context)
+    scaleImage(images[imageSeq.frame], context);
   }
-  
+
   function scaleImage(img, ctx) {
     var canvas = ctx.canvas;
     var hRatio = canvas.width / img.width;
@@ -422,24 +430,24 @@
     var centerShift_y = (canvas.height - img.height * ratio) / 2;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(img, 0, 0, img.width, img.height,
-    centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);
+      centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);
   }
-  
-  gsap.to("#home canvas",{
-    scale:0.8,
-    scrollTrigger:{
-        scrub:.1,
-        trigger:"#home",
-        start:"bottom 100%",
-        markers:true,
+
+  gsap.to("#home canvas", {
+    scale: 0.8,
+    scrollTrigger: {
+      scrub: .1,
+      trigger: "#home",
+      start: "bottom 100%",
+      markers: true,
     },
-  })
+  });
+
   ScrollTrigger.create({
-    trigger:"#home",
-    pin:true,
-    start:"bottom 100%",
-  })
-  
-  }
-  
-  dom()
+    trigger: "#home",
+    pin: true,
+    start: "bottom 100%",
+  });
+}
+
+dom();
